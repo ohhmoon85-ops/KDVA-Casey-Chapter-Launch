@@ -4,6 +4,13 @@
 
 export const EVENT = 'casey-2026-09-16';
 
+/**
+ * The Supabase project is shared with other apps, so the table carries a
+ * prefix rather than sitting on a name as common as `rsvps`. Keep this in
+ * step with supabase/schema.sql.
+ */
+export const TABLE = 'casey_rsvps';
+
 export const AFFILIATIONS = [
   'U.S. Soldier',
   'KATUSA',

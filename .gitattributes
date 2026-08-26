@@ -1,0 +1,2 @@
+# .ics must keep CRLF line endings per RFC 5545.
+*.ics -text

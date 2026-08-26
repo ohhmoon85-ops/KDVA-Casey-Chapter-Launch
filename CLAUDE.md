@@ -27,6 +27,14 @@ Next.js 15 (App Router) · TypeScript · Tailwind v4 · Supabase · Vercel · pn
 3. **영문 문안을 임의로 고치지 않는다.** 명세 8절의 문장이 확정본이다.
    특히 푸터 면책 문구("not an official U.S. Army function or endorsement")는
    미 2사단 여단 법무실 지침에 대응하는 필수 문안이므로 삭제·축약 불가.
+
+   승인된 예외 하나: 푸터의 Maza 박사 직함. 명세에는
+   "Dr. John P. Maza, KDVA Casey Chapter"로 되어 있으나 그는 챕터
+   **President**이며, 사용자 확인을 받아
+   "Dr. John P. Maza, President, KDVA Casey Chapter"로 적는다. 되돌리지 말 것.
+
+   또한 푸터에 `/staff` 링크를 넣지 않는다. 예전에 이름 뒤에 두었더니
+   "Staff"가 그의 직함처럼 읽혔다. 스태프는 주소를 직접 입력해 들어간다.
 4. **현장 참석을 막는 장치를 두지 않는다.** 등록 마감일(2026-09-04) 이후에도
    폼은 계속 열려 있다. 안내 문구만 바뀐다.
 5. **외부 UI 라이브러리를 설치하지 않는다.** QR 라이브러리도 필요 없다.

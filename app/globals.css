@@ -1,0 +1,410 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Design tokens — CLAUDE_CODE_PROMPT.md section 6.
+   These are the poster's colours. Do not improvise.
+   ------------------------------------------------------------------ */
+@theme {
+  --color-ink:   #0d1626; /* background        */
+  --color-ink2:  #141f33; /* input field fill  */
+  --color-line:  #2c3a52; /* rules and borders */
+  --color-line2: #1d2a3f; /* quieter rules     */
+  --color-paper: #f0ece4; /* body text         */
+  --color-dim:   #8491a4; /* secondary text    */
+  --color-fine:  #63707f; /* smallest text     */
+  --color-red:   #d01e36; /* emphasis          */
+
+  --font-display: "Big Shoulders Display", sans-serif;
+  --font-body:    "Work Sans", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, monospace;
+
+  /* Every corner in this project is square. Clearing the namespace means
+     the rounded-* utilities do not exist at all. */
+  --radius-*: initial;
+}
+
+@layer base {
+  html {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-body);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    border-radius: 0;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: 640px;
+    margin-inline: auto;
+    padding: 0 clamp(18px, 5vw, 34px) 64px;
+    flex: 1;
+  }
+
+  .rule {
+    height: 2px;
+    background: var(--color-line);
+  }
+
+  .rule-thin {
+    height: 2px;
+    background: var(--color-line2);
+  }
+
+  /* --- poster header (section 7) --- */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    color: var(--color-dim);
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 0;
+  }
+
+  .headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 0.86;
+    letter-spacing: 0.01em;
+    margin: 22px 0 0;
+  }
+
+  .headline span {
+    display: block;
+    font-size: clamp(58px, 17vw, 104px);
+  }
+
+  .venue {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(21px, 5.6vw, 30px);
+    letter-spacing: 0.09em;
+    margin: 20px 0 16px;
+  }
+
+  .bar {
+    background: var(--color-red);
+    padding: 13px 16px;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(23px, 6.4vw, 34px);
+    letter-spacing: 0.05em;
+  }
+
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.12em;
+    color: var(--color-dim);
+    line-height: 2;
+    margin-top: 16px;
+  }
+
+  /* --- type --- */
+  .kicker {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(26px, 7vw, 38px);
+    letter-spacing: 0.03em;
+    margin: 22px 0 4px;
+  }
+
+  .kicker-red {
+    color: var(--color-red);
+  }
+
+  .lede {
+    color: var(--color-dim);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0 0 22px;
+  }
+
+  .fine {
+    color: var(--color-fine);
+    font-size: 12.5px;
+    line-height: 1.65;
+    margin-top: 22px;
+  }
+
+  .err {
+    color: var(--color-red);
+    font-size: 13.5px;
+    margin-top: 14px;
+    min-height: 1px;
+  }
+
+  /* --- form --- */
+  .lbl {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--color-dim);
+    margin: 20px 0 7px;
+  }
+
+  .lbl .opt {
+    color: var(--color-fine);
+    letter-spacing: 0.1em;
+  }
+
+  .field {
+    width: 100%;
+    background: var(--color-ink2);
+    border: 1px solid var(--color-line);
+    color: var(--color-paper);
+    font-family: var(--font-body);
+    font-size: 16px; /* 16px keeps iOS from zooming the page on focus */
+    padding: 13px 14px;
+    outline: none;
+  }
+
+  .field:focus {
+    border-color: var(--color-red);
+    box-shadow: 0 0 0 2px rgb(208 30 54 / 0.25);
+  }
+
+  select.field {
+    appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--color-dim) 50%),
+      linear-gradient(135deg, var(--color-dim) 50%, transparent 50%);
+    background-position: calc(100% - 20px) 21px, calc(100% - 14px) 21px;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  @media (max-width: 400px) {
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .check {
+    display: flex;
+    gap: 11px;
+    align-items: flex-start;
+    margin-top: 22px;
+    color: var(--color-paper);
+    font-size: 14.5px;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  .check input {
+    width: 19px;
+    height: 19px;
+    flex: 0 0 19px;
+    margin-top: 1px;
+    accent-color: var(--color-red);
+  }
+
+  /* --- buttons --- */
+  .btn {
+    display: block;
+    width: 100%;
+    background: var(--color-red);
+    color: var(--color-paper);
+    border: 0;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: 0.09em;
+    padding: 15px;
+    margin-top: 28px;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .btn:hover {
+    filter: brightness(1.12);
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+    filter: none;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--color-line);
+    color: var(--color-paper);
+    font-size: 19px;
+    padding: 12px;
+    margin-top: 12px;
+  }
+
+  .pill {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    border: 1px solid var(--color-line);
+    padding: 7px 11px;
+    cursor: pointer;
+    background: transparent;
+    color: var(--color-dim);
+    width: auto;
+    margin: 0;
+  }
+
+  .pill:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  /* --- roster --- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--color-line);
+    border: 1px solid var(--color-line);
+    margin-top: 20px;
+  }
+
+  .stat {
+    background: var(--color-ink);
+    padding: 16px 12px;
+    text-align: center;
+  }
+
+  .stat b {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 1;
+  }
+
+  .stat span {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    color: var(--color-dim);
+  }
+
+  .tools {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+
+  .list {
+    margin-top: 18px;
+    border-top: 1px solid var(--color-line2);
+  }
+
+  .item {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 13px 2px;
+    border-bottom: 1px solid var(--color-line2);
+  }
+
+  .item-n {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .item-n b {
+    display: block;
+    font-weight: 600;
+    font-size: 15.5px;
+    overflow-wrap: anywhere;
+  }
+
+  .item-n span {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-dim);
+    letter-spacing: 0.06em;
+    overflow-wrap: anywhere;
+  }
+
+  .item-t {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--color-fine);
+    white-space: nowrap;
+  }
+
+  .empty {
+    color: var(--color-fine);
+    font-size: 14px;
+    padding: 28px 0;
+    text-align: center;
+  }
+
+  .banner {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 10px 14px;
+    border: 1px solid var(--color-line);
+    color: var(--color-dim);
+    margin-top: 18px;
+  }
+
+  .banner-bad {
+    border-color: var(--color-red);
+    color: var(--color-red);
+  }
+
+  .site-footer {
+    color: var(--color-fine);
+    font-size: 11.5px;
+    line-height: 1.7;
+    padding-top: 34px;
+  }
+
+  .site-footer a {
+    color: var(--color-dim);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fade {
+    animation: fade 0.34s ease both;
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+      transform: translateY(7px);
+    }
+  }
+}

@@ -1,0 +1,28 @@
+node_modules/
+.pnp
+.pnp.js
+
+.next/
+out/
+build/
+dist/
+
+.env
+.env.local
+.env*.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+.DS_Store
+*.pem
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# Superseded single-file prototype. Kept on disk for reference only —
+# it hard-codes a staff PIN in the page source, which is what this
+# rebuild exists to fix. Not committed.
+legacy/

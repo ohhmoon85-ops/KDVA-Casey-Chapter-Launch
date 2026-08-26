@@ -293,6 +293,8 @@
     margin-top: 20px;
   }
 
+  .stats-2 { grid-template-columns: repeat(2, 1fr); }
+
   .stat {
     background: var(--color-ink);
     padding: 16px 12px;
@@ -353,6 +355,14 @@
     letter-spacing: 0.06em;
     overflow-wrap: anywhere;
   }
+
+  .tag-kdva {
+    font-style: normal;
+    color: var(--color-red);
+    letter-spacing: 0.12em;
+  }
+
+  .tag-kdva::before { content: " \0000B7 "; color: var(--color-dim); }
 
   .item-t {
     font-family: var(--font-mono);

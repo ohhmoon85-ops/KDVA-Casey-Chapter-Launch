@@ -83,11 +83,13 @@ export function StaffRoster() {
     void load();
   }, [load]);
 
+  // Two counts, not three. Every reply is one person, so a separate
+  // "expected" total would repeat the RSVP count in the next box along,
+  // and two boxes showing the same number teach staff to distrust both.
   const stats = useMemo(() => {
     const list = rows ?? [];
     return {
       rsvps: list.length,
-      expected: list.reduce((total, r) => total + 1 + (r.guests || 0), 0),
       membership: list.filter((r) => r.wants_membership).length,
     };
   }, [rows]);
@@ -104,21 +106,12 @@ export function StaffRoster() {
   }, [rows, query]);
 
   function exportCsv() {
-    const head = [
-      'Name',
-      'Affiliation',
-      'Unit',
-      'Guests',
-      'Email',
-      'Membership interest',
-      'RSVP time',
-    ];
+    const head = ['Name', 'Affiliation', 'Unit', 'Email', 'Membership interest', 'RSVP time'];
 
     const body = (rows ?? []).map((r) => [
       r.name,
       r.affiliation ?? '',
       r.unit ?? '',
-      r.guests ?? 0,
       r.email ?? '',
       r.wants_membership ? 'yes' : '',
       csvStamp(r.created_at),
@@ -144,14 +137,10 @@ export function StaffRoster() {
       <div className="rule-thin" />
       <div className="kicker">ROSTER</div>
 
-      <div className="stats">
+      <div className="stats stats-2">
         <div className="stat">
           <b>{rows === null ? '—' : stats.rsvps}</b>
           <span>RSVPS</span>
-        </div>
-        <div className="stat">
-          <b>{rows === null ? '—' : stats.expected}</b>
-          <span>EXPECTED</span>
         </div>
         <div className="stat">
           <b>{rows === null ? '—' : stats.membership}</b>
@@ -199,13 +188,11 @@ export function StaffRoster() {
           shown.map((r) => (
             <div className="item" key={r.id}>
               <div className="item-n">
-                <b>
-                  {r.name}
-                  {r.guests ? ` +${r.guests}` : ''}
-                </b>
+                <b>{r.name}</b>
                 <span>
                   {r.affiliation ?? ''}
                   {r.unit ? ` · ${r.unit}` : ''}
+                  {r.wants_membership ? <em className="tag-kdva">KDVA</em> : null}
                 </span>
               </div>
               <div className="item-t">{shortStamp(r.created_at)}</div>
@@ -218,8 +205,8 @@ export function StaffRoster() {
         {rows === null
           ? ''
           : query.trim() && shown.length !== rows.length
-            ? `Showing ${shown.length} of ${rows.length}. The three counts above always cover everyone.`
-            : 'EXPECTED is the number for catering: everyone who replied, plus the guests they are bringing.'}
+            ? `Showing ${shown.length} of ${rows.length}. Both counts above always cover everyone.`
+            : 'RSVPS is the number for catering — one reply, one person. KDVA marks the people who asked for membership information.'}
       </p>
     </section>
   );

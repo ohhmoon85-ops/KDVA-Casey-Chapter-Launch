@@ -1,10 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
-import { AFFILIATIONS, MAX_GUESTS } from '@/lib/event';
+import { useState } from 'react';
+import { AFFILIATIONS } from '@/lib/event';
 
-const GUEST_OPTIONS = Array.from({ length: MAX_GUESTS + 1 }, (_, n) => n);
+/** Loose on purpose — it catches typos, it does not police addresses. */
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * Uncontrolled on purpose: when a save fails the inputs are never
@@ -12,7 +13,6 @@ const GUEST_OPTIONS = Array.from({ length: MAX_GUESTS + 1 }, (_, n) => n);
  */
 export function RsvpForm({ closed }: { closed: boolean }) {
   const router = useRouter();
-  const formRef = useRef<HTMLFormElement>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -23,14 +23,26 @@ export function RsvpForm({ closed }: { closed: boolean }) {
     const form = event.currentTarget;
     const data = new FormData(form);
 
+    const fail = (message: string, field: string) => {
+      setError(message);
+      form.querySelector<HTMLInputElement>(field)?.focus();
+    };
+
     const name = String(data.get('name') ?? '').trim();
     if (name.length < 2) {
-      setError('Enter your name so we can find you on the list.');
-      form.querySelector<HTMLInputElement>('#f-name')?.focus();
+      fail('Enter your name so we can find you on the list.', '#f-name');
       return;
     }
 
-    const guests = Number(data.get('guests') ?? 0);
+    const email = String(data.get('email') ?? '').trim();
+    if (!email) {
+      fail('Enter your email so we can send you the reminder.', '#f-email');
+      return;
+    }
+    if (!EMAIL.test(email)) {
+      fail('That email address does not look right.', '#f-email');
+      return;
+    }
 
     setSaving(true);
     setError('');
@@ -43,8 +55,7 @@ export function RsvpForm({ closed }: { closed: boolean }) {
           name,
           affiliation: String(data.get('affiliation') ?? ''),
           unit: String(data.get('unit') ?? '').trim() || null,
-          guests,
-          email: String(data.get('email') ?? '').trim() || null,
+          email,
           wants_membership: data.get('wants_membership') === 'on',
         }),
       });
@@ -58,8 +69,8 @@ export function RsvpForm({ closed }: { closed: boolean }) {
       }
 
       // Stays disabled through the navigation so a second tap cannot add a
-      // second row to the catering count.
-      router.push(`/thanks?guests=${guests}`);
+      // second row to the count.
+      router.push('/thanks');
     } catch {
       setError('That did not save. Check your connection and try once more.');
       setSaving(false);
@@ -80,7 +91,7 @@ export function RsvpForm({ closed }: { closed: boolean }) {
         </p>
       )}
 
-      <form ref={formRef} onSubmit={onSubmit} noValidate>
+      <form onSubmit={onSubmit} noValidate>
         <label className="lbl" htmlFor="f-name">
           NAME
         </label>
@@ -104,29 +115,13 @@ export function RsvpForm({ closed }: { closed: boolean }) {
           ))}
         </select>
 
-        <div className="row">
-          <div>
-            <label className="lbl" htmlFor="f-unit">
-              UNIT <span className="opt">(optional)</span>
-            </label>
-            <input className="field" id="f-unit" name="unit" placeholder="e.g. 1-72 AR" />
-          </div>
-          <div>
-            <label className="lbl" htmlFor="f-guests">
-              GUESTS WITH YOU
-            </label>
-            <select className="field" id="f-guests" name="guests" defaultValue="0">
-              {GUEST_OPTIONS.map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+        <label className="lbl" htmlFor="f-unit">
+          UNIT <span className="opt">(optional)</span>
+        </label>
+        <input className="field" id="f-unit" name="unit" placeholder="e.g. 1-72 AR" />
 
         <label className="lbl" htmlFor="f-email">
-          EMAIL <span className="opt">(optional — for the reminder)</span>
+          EMAIL
         </label>
         <input
           className="field"
@@ -136,6 +131,7 @@ export function RsvpForm({ closed }: { closed: boolean }) {
           autoComplete="email"
           inputMode="email"
           placeholder="you@example.com"
+          required
         />
 
         <label className="check" htmlFor="f-member">

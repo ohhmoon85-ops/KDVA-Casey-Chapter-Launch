@@ -14,7 +14,7 @@ export async function GET() {
 
   const { data, error } = await supabaseAdmin()
     .from(TABLE)
-    .select('id, event, name, affiliation, unit, guests, email, wants_membership, created_at')
+    .select('id, event, name, affiliation, unit, email, wants_membership, created_at')
     .eq('event', EVENT)
     .order('created_at', { ascending: false });
 

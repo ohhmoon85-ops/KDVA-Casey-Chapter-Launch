@@ -1,35 +1,16 @@
 import Link from 'next/link';
-import { MAX_GUESTS } from '@/lib/event';
 
 /**
- * There is no ticket, no code and no QR — by design. The only thing this
- * screen needs to know is how many people were counted, which the form
- * passes in the address so a refresh still shows the right number.
- * It is display text only; nothing downstream trusts it.
+ * There is no ticket, no code and no QR — by design. Everyone who replies
+ * counts as one person, so there is no number to carry over here either.
  */
-export default async function ThanksPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ guests?: string }>;
-}) {
-  const { guests } = await searchParams;
-  const extra = Math.min(Math.max(Math.trunc(Number(guests)) || 0, 0), MAX_GUESTS);
-  const total = 1 + extra;
-
+export default function ThanksPage() {
   return (
     <section className="fade pt-[30px]">
       <div className="rule-thin" />
       <div className="kicker kicker-red">YOU&rsquo;RE ON THE LIST</div>
 
-      <p className="lede">
-        Just give your name at the door. Nothing to show, nothing to print.
-        {total > 1 ? (
-          <>
-            {' '}
-            We have you down for <b>{total}</b> people.
-          </>
-        ) : null}
-      </p>
+      <p className="lede">Just give your name at the door. Nothing to show, nothing to print.</p>
 
       <a className="btn btn-ghost" href="/kdva-casey-launch.ics" download>
         ADD TO CALENDAR

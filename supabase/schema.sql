@@ -16,8 +16,7 @@ create table if not exists public.casey_rsvps (
   name             text        not null,
   affiliation      text,
   unit             text,
-  guests           int         not null default 0,
-  email            text,
+  email            text        not null,
   wants_membership boolean     not null default false,
   created_at       timestamptz not null default now()
 );

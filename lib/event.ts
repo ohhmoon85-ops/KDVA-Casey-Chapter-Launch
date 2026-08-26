@@ -22,8 +22,6 @@ export const AFFILIATIONS = [
 
 export type Affiliation = (typeof AFFILIATIONS)[number];
 
-export const MAX_GUESTS = 5;
-
 /** Yyyy-mm-dd. The last day we can still hand a count to catering. */
 export const RSVP_DEADLINE = process.env.NEXT_PUBLIC_RSVP_DEADLINE ?? '2026-09-04';
 

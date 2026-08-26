@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { AFFILIATIONS, EVENT, MAX_GUESTS, TABLE } from '@/lib/event';
+import { AFFILIATIONS, EVENT, TABLE } from '@/lib/event';
 import { clientIp, rateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase';
 
@@ -44,18 +44,16 @@ export async function POST(req: Request) {
     return reject('Pick one of the options under "I am".');
   }
 
-  const guests = Number(input.guests);
-  if (!Number.isInteger(guests) || guests < 0 || guests > MAX_GUESTS) {
-    return reject(`Guests has to be a number from 0 to ${MAX_GUESTS}.`);
-  }
-
   const unit = clean(input.unit, 80) || null;
 
-  const email = clean(input.email, 160) || null;
-  // Deliberately loose. A wrong address only costs one unsent reminder, so
-  // the check is here to catch typos, not to police what an address may be.
-  if (email !== null && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return reject('That email address does not look right. Fix it, or leave it blank.');
+  const email = clean(input.email, 160);
+  if (!email) {
+    return reject('Enter your email so we can send you the reminder.');
+  }
+  // Deliberately loose. The check is here to catch typos, not to police
+  // what an address may look like.
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return reject('That email address does not look right.');
   }
 
   const wants_membership = input.wants_membership === true;
@@ -66,7 +64,7 @@ export async function POST(req: Request) {
   try {
     const { error } = await supabaseAdmin()
       .from(TABLE)
-      .insert({ event: EVENT, name, affiliation, unit, guests, email, wants_membership });
+      .insert({ event: EVENT, name, affiliation, unit, email, wants_membership });
 
     if (error) {
       console.error('rsvp insert failed', error);
@@ -77,5 +75,5 @@ export async function POST(req: Request) {
     return reject(GENERIC, 502);
   }
 
-  return NextResponse.json({ ok: true, guests });
+  return NextResponse.json({ ok: true });
 }

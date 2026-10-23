@@ -1,7 +1,7 @@
 /**
- * The poster's header block, section 7 of the spec. It sits above every
- * screen, unchanged. The wording and the running order are printed on the
- * poster, so they are not adjustable here.
+ * The poster's header block. It sits above every screen, unchanged. The
+ * wording follows the year-end poster (THU 3 DEC), so it is not adjustable
+ * here without the poster changing first.
  */
 export function PosterHeader() {
   return (
@@ -10,7 +10,7 @@ export function PosterHeader() {
 
       <div className="eyebrow">
         <span>KOREA DEFENSE VETERANS ASSOCIATION</span>
-        <span>USAG CASEY</span>
+        <span>USAG CASEY / ROK</span>
       </div>
 
       <h1 className="headline">
@@ -18,14 +18,16 @@ export function PosterHeader() {
         <span className="text-red">K-POP</span>
       </h1>
 
-      <div className="venue">AT THE WARRIOR CLUB</div>
+      <div className="venue">CASEY CHAPTER · YEAR-END MEET &amp; GREET</div>
 
-      <div className="bar">WED 16 SEP &nbsp;·&nbsp; 1730 — 1930</div>
+      <div className="bar">THU 3 DEC &nbsp;·&nbsp; 1800</div>
 
       <div className="meta">
-        VOICE ON THE STREET / FIRST SET 1820 / SECOND SET 1905
+        FEATURING BLUEBEATZ / SIX-MEMBER K-POP GIRL GROUP
         <br />
-        FREE FOOD / TWO LIVE SETS / RSVP BY FRI 4 SEP
+        LIVE ON STAGE AT THE WARRIOR CLUB
+        <br />
+        FREE FOOD / RSVP BY FRI 27 NOV
       </div>
     </header>
   );

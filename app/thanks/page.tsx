@@ -12,7 +12,7 @@ export default function ThanksPage() {
 
       <p className="lede">Just give your name at the door. Nothing to show, nothing to print.</p>
 
-      <a className="btn btn-ghost" href="/kdva-casey-launch.ics" download>
+      <a className="btn btn-ghost" href="/kdva-casey-year-end.ics" download>
         ADD TO CALENDAR
       </a>
 
@@ -21,8 +21,8 @@ export default function ThanksPage() {
       </Link>
 
       <p className="fine">
-        Wednesday 16 September 2026, 1730—1930 · Warrior Club, Camp Casey. Official remarks run 15
-        minutes; the rest is food, music, and conversation.
+        Thursday 3 December 2026, 1800—2000 · Warrior Club, Camp Casey. A year-end night of food,
+        live music, and good company — no long speeches.
       </p>
     </section>
   );

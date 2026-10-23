@@ -1,7 +1,8 @@
-# KDVA Casey Chapter 창설식 RSVP
+# KDVA Casey Chapter Year-End Meet & Greet RSVP
 
-2026년 9월 16일(수) 캠프 케이시 워리어 클럽에서 열리는 KDVA Casey Chapter
-창설식의 참석 사전 등록 웹사이트.
+2026년 12월 3일(목) 18:00–20:00 캠프 케이시 워리어 클럽에서 열리는 KDVA Casey
+Chapter Year-End Meet & Greet(Live K-POP, BlueBeatz 출연)의 참석 사전 등록 웹사이트.
+9월 16일 창설식 때 만든 사이트를 같은 주소로 다시 쓴다.
 
 **목적은 하나다. 몇 명이 오는지 파악해서 음식을 준비하는 것.** 그리고 이 행사를
 통해 만난 사람들에게 KDVA 가입을 안내하는 것.
@@ -34,10 +35,10 @@
 
 ## 참석자에게 보이는 화면
 
-1. **`/`** — 등록 폼. 이름, 소속, 부대(선택), 이메일, KDVA 가입 안내 희망 여부.
+1. **`/`** — 등록 폼. 성(Last name), 이름(First name), 소속, 부대(선택), 이메일, KDVA 가입 안내 희망 여부.
 2. **`/thanks`** — 확인 화면. 티켓도 코드도 QR도 없다. 이름만 대면 되기 때문이다.
 
-**등록 마감일(2026-09-04)이 지나도 폼은 계속 열려 있다.** 안내 문구만
+**등록 마감일(2026-11-27)이 지나도 폼은 계속 열려 있다.** 안내 문구만
 "Registration has closed, but you are still welcome to walk in."으로 바뀐다.
 마감은 음식 수량을 잡기 위한 편의이지 참석 조건이 아니다.
 
@@ -53,7 +54,8 @@
 - **`FIND SOMEONE`** — 이름이나 부대로 검색.
 - 명단에서 가입 요청자는 이름 옆에 빨간 **`KDVA`** 표시가 붙는다.
 - **`EXPORT CSV`** — 엑셀로 바로 열린다. 한글이 깨지지 않도록 UTF-8 표식(BOM)을
-  넣어두었다. 열: Name, Affiliation, Unit, Email, Membership interest, RSVP time
+  넣어두었다. Name 열은 "Kim, Minsu"처럼 성, 이름 순이다.
+  열: Name, Affiliation, Unit, Email, Membership interest, RSVP time
 
 로그인은 12시간 유지된다. 시도는 분당 5회로 제한된다(4자리 PIN 무작정 대입 방지).
 
@@ -80,13 +82,13 @@ Table Editor에서 직접 지운다.
 SUPABASE_URL=https://xxxxxxxx.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
 STAFF_PIN=1234
-NEXT_PUBLIC_RSVP_DEADLINE=2026-09-04
+NEXT_PUBLIC_RSVP_DEADLINE=2026-11-27
 ```
 
 - `SUPABASE_SERVICE_ROLE_KEY`는 Supabase → Project Settings → API →
   Project API keys → **`service_role`** (anon 아님).
-- `STAFF_PIN`은 **행사 날짜와 무관한 숫자로.** 포스터에 `16 SEP`이 인쇄돼
-  있어서 `0916`은 제일 먼저 찍힐 숫자다. **정한 숫자를 따로 적어둘 것** —
+- `STAFF_PIN`은 **행사 날짜와 무관한 숫자로.** 포스터에 `3 DEC`이 인쇄돼
+  있어서 `1203`은 제일 먼저 찍힐 숫자다. **정한 숫자를 따로 적어둘 것** —
   Vercel에 비밀로 저장하면 다시 볼 수 없다.
 - `NEXT_PUBLIC_RSVP_DEADLINE`은 브라우저로 내려가는 값이라 Vercel에서
   비밀로 저장할 수 없다. 정상이다.
@@ -108,7 +110,7 @@ NEXT_PUBLIC_RSVP_DEADLINE=2026-09-04
 서버 라우트를 통한다. 브라우저는 Supabase 키를 쥐지 않는다.
 
 무료 프로젝트는 7일간 요청이 없으면 일시정지되고, 그동안 등록이 실패한다.
-9월 16일까지 조용한 기간이 생길 것 같으면 대비가 필요하다.
+12월 3일까지 조용한 기간이 생길 것 같으면 대비가 필요하다.
 
 ---
 
@@ -207,7 +209,7 @@ Supabase 대시보드에서 프로젝트 상태가 `Healthy`인지 확인한다.
 
 ## 행사 당일 순서
 
-1. **9월 4일 이후** — `/staff`에서 `EXPORT CSV`, 엑셀로 열어 케이터링에 인원 전달
+1. **11월 27일 이후** — `/staff`에서 `EXPORT CSV`, 엑셀로 열어 케이터링에 인원 전달
 2. **행사 전날** — 스태프 휴대폰에 `/staff` 주소 북마크, PIN 공유
 3. **당일 입구** — 명단은 참고용이다. 이름이 없어도 들여보낸다
 4. **행사 후** — `EXPORT CSV`, `Membership interest`가 `yes`인 사람에게 가입 안내

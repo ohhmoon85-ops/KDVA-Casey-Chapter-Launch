@@ -120,7 +120,7 @@ export function StaffRoster() {
     // The leading U+FEFF is what stops Excel reading Korean names as
     // mojibake. Written as an escape on purpose: as a literal it is an
     // invisible character that an editor or a formatter can quietly drop,
-    // and the damage would only show up on someone's laptop in September.
+    // and the damage would only show up on someone's laptop in December.
     const csv =
       '\uFEFF' + [head, ...body].map((line) => line.map(csvCell).join(',')).join('\r\n');
 

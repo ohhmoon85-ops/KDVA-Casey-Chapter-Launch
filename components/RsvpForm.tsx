@@ -28,9 +28,15 @@ export function RsvpForm({ closed }: { closed: boolean }) {
       form.querySelector<HTMLInputElement>(field)?.focus();
     };
 
-    const name = String(data.get('name') ?? '').trim();
-    if (name.length < 2) {
-      fail('Enter your name so we can find you on the list.', '#f-name');
+    const last_name = String(data.get('last_name') ?? '').trim();
+    if (!last_name) {
+      fail('Enter your last name so we can find you on the list.', '#f-last');
+      return;
+    }
+
+    const first_name = String(data.get('first_name') ?? '').trim();
+    if (!first_name) {
+      fail('Enter your first name so we can find you on the list.', '#f-first');
       return;
     }
 
@@ -52,7 +58,8 @@ export function RsvpForm({ closed }: { closed: boolean }) {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          name,
+          last_name,
+          first_name,
           affiliation: String(data.get('affiliation') ?? ''),
           unit: String(data.get('unit') ?? '').trim() || null,
           email,
@@ -86,21 +93,33 @@ export function RsvpForm({ closed }: { closed: boolean }) {
         <p className="lede">Registration has closed, but you are still welcome to walk in.</p>
       ) : (
         <p className="lede">
-          <b>Please reply by Friday 4 September.</b> This helps us get the food count right. It is
+          <b>Please reply by Friday 27 November.</b> This helps us get the food count right. It is
           not required to attend — you are welcome to walk in either way.
         </p>
       )}
 
       <form onSubmit={onSubmit} noValidate>
-        <label className="lbl" htmlFor="f-name">
-          NAME
+        <label className="lbl" htmlFor="f-last">
+          LAST NAME
         </label>
         <input
           className="field"
-          id="f-name"
-          name="name"
-          autoComplete="name"
-          placeholder="Rank and name, e.g. SGT Kim"
+          id="f-last"
+          name="last_name"
+          autoComplete="family-name"
+          placeholder="e.g. Kim"
+          required
+        />
+
+        <label className="lbl" htmlFor="f-first">
+          FIRST NAME
+        </label>
+        <input
+          className="field"
+          id="f-first"
+          name="first_name"
+          autoComplete="given-name"
+          placeholder="e.g. Minsu"
           required
         />
 

@@ -5,8 +5,13 @@
 
 ## 프로젝트
 
-2026년 9월 16일(수) 캠프 케이시 워리어 클럽에서 열리는 KDVA Casey Chapter
-창설식의 참석 사전등록 웹앱.
+2026년 12월 3일(목) 18:00–20:00 캠프 케이시 워리어 클럽에서 열리는 KDVA Casey
+Chapter **Year-End Meet & Greet**(Live K-POP, BlueBeatz 출연)의 참석 사전등록 웹앱.
+
+원래 9월 16일(수) 창설식용으로 만들었고, 같은 주소로 연말 행사에 다시 쓴다.
+행사 문구(헤더·안내·확인 화면·.ics)는 12월 포스터가 기준이다. 9월 등록자는
+DB에 `event = 'casey-2026-09-16'`으로 남아 있고, 명단은 `lib/event.ts`의
+`EVENT`(`casey-2026-12-03`)만 보여준다.
 
 **목적은 하나다. 행사 전에 몇 명이 오는지 파악해서 식사를 준비하는 것.**
 
@@ -36,6 +41,9 @@ Next.js 15 (App Router) · TypeScript · Tailwind v4 · Supabase · Vercel · pn
    또한 푸터에 `/staff` 링크를 넣지 않는다. 예전에 이름 뒤에 두었더니
    "Staff"가 그의 직함처럼 읽혔다. 스태프는 주소를 직접 입력해 들어간다.
 
+10. **이름은 성(LAST NAME)과 이름(FIRST NAME)을 따로 받는다.** 둘 다 필수.
+   DB에는 기존 `name` 열에 "Last, First"로 합쳐 저장한다(스키마 변경 없음).
+
 6. **폼은 한 줄이 한 사람이다.** 동반 인원(guests) 항목은 없다. 명세 4.1 표에는
    있으나 사용자가 제거하라고 했다. 연랑해서 명세 4.3의 통계는 3개가 아니라
    `RSVPS` / `MEMBERSHIP` **2개**다. `EXPECTED`는 `RSVPS`와 항상 같아져서 버렸다.
@@ -48,7 +56,7 @@ Next.js 15 (App Router) · TypeScript · Tailwind v4 · Supabase · Vercel · pn
    단, 폼 하단은 여전히 "used only to plan this event"라고 적혀 있다.
    그러므로 **가입 안내 메일은 체크박스를 누른 사람에게만** 보낸다.
    전체 발송하려면 먼저 폼 문구를 바꿔야 한다.
-4. **현장 참석을 막는 장치를 두지 않는다.** 등록 마감일(2026-09-04) 이후에도
+4. **현장 참석을 막는 장치를 두지 않는다.** 등록 마감일(2026-11-27) 이후에도
    폼은 계속 열려 있다. 안내 문구만 바뀐다.
 5. **외부 UI 라이브러리를 설치하지 않는다.** QR 라이브러리도 필요 없다.
 
@@ -95,7 +103,7 @@ JetBrains Mono 400 (라벨, letter-spacing 0.18em)
 SUPABASE_URL
 SUPABASE_SERVICE_ROLE_KEY
 STAFF_PIN
-NEXT_PUBLIC_RSVP_DEADLINE=2026-09-04
+NEXT_PUBLIC_RSVP_DEADLINE=2026-11-27
 ```
 
 `.env.local`은 커밋하지 않는다. `.env.example`은 커밋한다.

@@ -4,9 +4,9 @@ import { SiteFooter } from '@/components/SiteFooter';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'RSVP — KDVA Casey Chapter Launch',
+  title: 'RSVP — KDVA Casey Chapter Year-End Meet & Greet',
   description:
-    'Live K-POP at the Warrior Club, Camp Casey. Wednesday 16 September 2026, 1730—1930. Free food, two live sets.',
+    'Live K-POP at the Warrior Club, Camp Casey. Thursday 3 December 2026, 1800. Free food, BlueBeatz live on stage.',
   robots: { index: false, follow: false },
 };
 

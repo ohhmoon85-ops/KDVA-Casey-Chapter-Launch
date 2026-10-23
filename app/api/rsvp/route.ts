@@ -34,10 +34,19 @@ export async function POST(req: Request) {
   if (typeof body !== 'object' || body === null) return reject(GENERIC);
   const input = body as Record<string, unknown>;
 
-  const name = clean(input.name, 120);
-  if (name.length < 2) {
-    return reject('Enter your name so we can find you on the list.');
+  // The form asks for the two halves separately so the roster never has to
+  // guess which part is the surname. They are stored together in the one
+  // `name` column as "Last, First" — no schema change, and the roster, the
+  // search and the CSV keep working as they are.
+  const last_name = clean(input.last_name, 60);
+  if (!last_name) {
+    return reject('Enter your last name so we can find you on the list.');
   }
+  const first_name = clean(input.first_name, 60);
+  if (!first_name) {
+    return reject('Enter your first name so we can find you on the list.');
+  }
+  const name = `${last_name}, ${first_name}`;
 
   const affiliation = clean(input.affiliation, 40);
   if (!(AFFILIATIONS as readonly string[]).includes(affiliation)) {

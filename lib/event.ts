@@ -2,7 +2,7 @@
  * Facts about the event. Safe to import from anywhere — nothing secret here.
  */
 
-export const EVENT = 'casey-2026-09-16';
+export const EVENT = 'casey-2026-12-03';
 
 /**
  * The Supabase project is shared with other apps, so the table carries a
@@ -23,7 +23,7 @@ export const AFFILIATIONS = [
 export type Affiliation = (typeof AFFILIATIONS)[number];
 
 /** Yyyy-mm-dd. The last day we can still hand a count to catering. */
-export const RSVP_DEADLINE = process.env.NEXT_PUBLIC_RSVP_DEADLINE ?? '2026-09-04';
+export const RSVP_DEADLINE = process.env.NEXT_PUBLIC_RSVP_DEADLINE ?? '2026-11-27';
 
 /**
  * The deadline is a catering cut-off, not a condition of attending. Passing

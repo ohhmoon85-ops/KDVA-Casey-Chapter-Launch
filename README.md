@@ -110,7 +110,31 @@ NEXT_PUBLIC_RSVP_DEADLINE=2026-11-27
 서버 라우트를 통한다. 브라우저는 Supabase 키를 쥐지 않는다.
 
 무료 프로젝트는 7일간 요청이 없으면 일시정지되고, 그동안 등록이 실패한다.
-12월 3일까지 조용한 기간이 생길 것 같으면 대비가 필요하다.
+그래서 **매일 한 번 자동으로 DB를 깨우는 장치**를 붙여두었다(아래).
+
+---
+
+## Supabase 일시정지 방지 (keep-alive)
+
+행사 전 조용한 기간이 길어도 프로젝트가 잠들지 않게, 하루 한 번 가벼운 읽기를
+보낸다. 쓰기는 하지 않는다.
+
+| 무엇 | 어디 |
+|---|---|
+| 읽기 엔드포인트 | `GET /api/keepalive` — `casey_rsvps`에서 `id` 한 줄만 읽고 `{"ok":true}` 반환 |
+| 부르는 쪽 | `vercel.json`의 **Vercel Cron** — 매일 10:13(KST), 경로 `/api/keepalive` |
+
+- 손으로 확인하는 법: 브라우저에
+  `https://kdva-casey-chapter-launch.vercel.app/api/keepalive`를 열어서
+  `{"ok":true,...}`가 보이면 사이트도 DB도 살아 있다는 뜻이다. 그 외가 나오면
+  Vercel → Logs에서 `keep-alive`로 시작하는 줄을 본다.
+- **Secret·환경변수는 새로 필요 없다.** 엔드포인트가 공개 GET이고 아무 정보도
+  내보내지 않기 때문이다.
+- Vercel 무료(Hobby) 플랜은 프로젝트당 cron 2개, 하루 1회까지다. 지금은 이거 하나다.
+  두 번째가 필요해지면 KATUSA처럼 시간대를 나눈다.
+- 스케줄은 **push해야 적용된다.** `vercel.json`을 바꾸면 재배포가 되어야 cron이 갱신된다.
+- **Vercel Cron은 이미 정지된 프로젝트를 스스로 되살리지 못한다.** 정지를 막는
+  장치다. 정지되면 Supabase 대시보드에서 **Restore project**를 눌러야 한다.
 
 ---
 
@@ -203,7 +227,12 @@ Vercel 환경변수 `STAFF_PIN`의 값이다. 로컬 `.env.local`의 값이 아�
 ### 등록이 저장되지 않는다
 
 Supabase 무료 프로젝트가 일시정지됐을 수 있다(7일간 요청이 없으면 정지).
-Supabase 대시보드에서 프로젝트 상태가 `Healthy`인지 확인한다.
+Supabase 대시보드에서 프로젝트 상태가 `Healthy`인지 확인한다. 정지되어 있으면
+대시보드에서 **Restore project**를 누른다 — 자동 keep-alive는 정지를 막을 뿐
+이미 정지된 프로젝트를 스스로 되살리지는 못한다.
+
+평소에 잠들었는지는 브라우저에 `/api/keepalive`를 열어 보면 안다
+(`{"ok":true}`가 아니면 사이트 라 DB가 죽은 것이다).
 
 ---
 
@@ -241,10 +270,12 @@ app/
   thanks/page.tsx             확인 화면
   staff/page.tsx              명단 (서버에서 PIN 세션 확인)
   api/rsvp/route.ts           등록 저장
+  api/keepalive/route.ts      DB 깨우기 (하루 1회, 읽기만)
   api/staff/login/route.ts    PIN 검증 → httpOnly 쿠키 12시간
   api/staff/roster/route.ts   명단 조회 (쿠키 필요)
 components/                   화면 조각
 lib/supabase.ts               Supabase 키를 읽는 유일한 파일 (server-only)
 lib/session.ts                스태프 세션 서명·검증
 supabase/schema.sql           표 생성 SQL
+vercel.json                   매일 /api/keepalive를 부르는 cron
 ```

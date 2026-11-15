@@ -81,6 +81,7 @@ Next.js 15 (App Router) · TypeScript · Tailwind v4 · Supabase · Vercel · pn
 ## API
 
 - `POST /api/rsvp` 등록 (rate limit: 같은 IP 분당 10건)
+- `GET /api/keepalive` DB 깨우기 — `id` 한 줄 읽기만, 쓰기 없음. `vercel.json`의 Cron이 하루 1회 호출
 - `POST /api/staff/login` PIN 검증 → httpOnly 쿠키 12시간
 - `GET /api/staff/roster` 명단
 

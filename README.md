@@ -1,14 +1,13 @@
-# KDVA Casey Chapter Year-End Meet & Greet RSVP
+# KDVA Casey Chapter Year-End Meet & Greet — 등록·체크인·회원가입
 
 2026년 12월 3일(목) 18:00–20:00 캠프 케이시 워리어 클럽에서 열리는 KDVA Casey
-Chapter Year-End Meet & Greet(Live K-POP, BlueBeatz 출연)의 참석 사전 등록 웹사이트.
+Chapter Year-End Meet & Greet(Live K-POP, BlueBeatz 출연)의 등록·체크인 웹사이트.
 9월 16일 창설식 때 만든 사이트를 같은 주소로 다시 쓴다.
 
-**목적은 하나다. 몇 명이 오는지 파악해서 음식을 준비하는 것.** 그리고 이 행사를
-통해 만난 사람들에게 KDVA 가입을 안내하는 것.
+**목적은 셋이다. 음식 수량 파악, 현장 체크인, 그리고 그 자리에서 KDVA 회원가입.**
 
-행사 당일 입구에는 어떤 시스템도 두지 않는다. 이름을 대면 들어가고, 등록하지
-않은 사람도 들어간다.
+입구의 종이 등록지를 이 사이트가 대신한다(포스터 QR + 입구 태블릿). 그래도
+등록하지 않은 사람의 입장은 막지 않는다.
 
 ---
 
@@ -18,6 +17,7 @@ Chapter Year-End Meet & Greet(Live K-POP, BlueBeatz 출연)의 참석 사전 등
 |---|---|
 | 등록 폼 (포스터 QR이 가리키는 곳) | https://kdva-casey-chapter-launch.vercel.app |
 | 명단 (스태프 전용, PIN 필요) | https://kdva-casey-chapter-launch.vercel.app/staff |
+| 입구 태블릿 | https://kdva-casey-chapter-launch.vercel.app/?kiosk=1 |
 
 > ### ⚠️ 주소는 이제 바꿀 수 없다
 >
@@ -35,12 +35,21 @@ Chapter Year-End Meet & Greet(Live K-POP, BlueBeatz 출연)의 참석 사전 등
 
 ## 참석자에게 보이는 화면
 
-1. **`/`** — 등록 폼. 성(Last name), 이름(First name), 소속, 부대(선택), 이메일, KDVA 가입 안내 희망 여부.
-2. **`/thanks`** — 확인 화면. 티켓도 코드도 QR도 없다. 이름만 대면 되기 때문이다.
+1. **`/`** — 등록 폼. 성, 이름, 소속(I am), 부대(선택), 이메일, 그리고
+   **CHECK IN + JOIN KDVA / CHECK IN ONLY** 중 하나(미리 선택돼 있지 않다).
+   가입을 고르면 복무상태·계급을 묻고 회원가입 앱의 `members` 표에 바로 저장한다.
+   같은 휴대폰으로 다시 들어오면 "Checked in as …"와 가입 버튼이 보인다.
+2. **`/thanks`** — 확인 화면. 티켓도 코드도 QR도 없다. 가입 결과를 보여주고,
+   체크인만 한 사람에게는 한 번 더 가입을 권한다.
+3. **`/?kiosk=1`** — 입구 태블릿. 앞사람 정보를 남기지도 보여주지도 않고,
+   등록 6초 뒤 자동으로 첫 화면으로 돌아온다.
+4. **`/?same=1`** — 확인 화면의 "REGISTER A COLLEAGUE (SAME UNIT)". 소속·부대를
+   미리 채운다. 동료를 가입시키려면 "They told me they want to join KDVA."를
+   체크해야 한다.
 
 **등록 마감일(2026-11-27)이 지나도 폼은 계속 열려 있다.** 안내 문구만
-"Registration has closed, but you are still welcome to walk in."으로 바뀐다.
-마감은 음식 수량을 잡기 위한 편의이지 참석 조건이 아니다.
+"The food count is in, but you can still sign up here…"로 바뀐다. 행사 당일에는
+`CHECK IN` 화면이 된다. 마감은 음식 수량을 잡기 위한 편의이지 참석 조건이 아니다.
 
 ---
 
@@ -50,27 +59,33 @@ Chapter Year-End Meet & Greet(Live K-POP, BlueBeatz 출연)의 참석 사전 등
 북마크해 둘 것.** 당일 시끄러운 입구에서 긴 주소를 타이핑하게 하면 안 된다.
 
 - **`RSVPS`** — 응답한 사람 수. 케이터링에 넘길 숫자다.
-- **`MEMBERSHIP`** — 가입 안내를 요청한 사람 수.
+- **`KDVA MEMBERS`** — 이 중 실제 `members` 표에 있는 사람 수. 아래 작은 글씨는
+  가입을 원했지만 아직 회원이 아닌 사람 수.
+- 화면은 30초마다 저절로 새로고침된다.
+- 이름 옆 표시: **`KDVA ✓`** 회원, **`WANTS KDVA`** 원했지만 아직 미가입.
+- **`MAKE MEMBER`** — 현장에서 "가입할게요"라고 한 사람, 또는 예전 체크박스로
+  희망만 표시한 사람을 스태프가 복무상태·계급을 물어 바로 가입시킨다.
+- **`NOT MEMBERS YET`** — 아직 회원이 아닌 사람만 보기.
+- **`OPEN DOOR TABLET`** — 입구 태블릿 화면을 새 탭으로 연다.
 - **`FIND SOMEONE`** — 이름이나 부대로 검색.
-- 명단에서 가입 요청자는 이름 옆에 빨간 **`KDVA`** 표시가 붙는다.
 - **`EXPORT CSV`** — 엑셀로 바로 열린다. 한글이 깨지지 않도록 UTF-8 표식(BOM)을
   넣어두었다. Name 열은 "Kim, Minsu"처럼 성, 이름 순이다.
-  열: Name, Affiliation, Unit, Email, Membership interest, RSVP time
+  열: Name, Affiliation, Unit, Email, Membership interest, KDVA member, RSVP time
 
 로그인은 12시간 유지된다. 시도는 분당 5회로 제한된다(4자리 PIN 무작정 대입 방지).
 
-읽기 전용 화면이다. 수정·삭제 기능은 없다. 잘못 들어간 줄은 Supabase
+회원 전환 외에는 수정·삭제 기능이 없다. 잘못 들어간 줄은 Supabase
 Table Editor에서 직접 지운다.
 
-### 가입 안내 메일을 보낼 때
+### 이메일을 어디까지 써도 되나
 
 폼 하단에 이렇게 적혀 있다.
 
-> Your details are used only to plan this event and are not shared outside KDVA.
+> Your details are used to plan this event and, if you choose to join, to register
+> you as a KDVA member. They are not shared outside KDVA.
 
-**"이 행사를 준비하는 데만 쓴다"는 약속이다.** 그러므로 가입 안내 메일은
-체크박스를 누른 사람 — 명단에서 `KDVA` 표시가 붙은 사람 — 에게만 보낸다.
-전원에게 보내려면 폼 문구를 먼저 바꿔야 한다.
+그러므로 **CHECK IN ONLY를 고른 사람의 이메일은 이 행사 준비에만 쓴다.**
+회원 안내는 회원(`KDVA ✓`)에게만 보낸다. 다른 용도로 쓰려면 폼 문구를 먼저 바꿔야 한다.
 
 ---
 
@@ -240,9 +255,11 @@ Supabase 대시보드에서 프로젝트 상태가 `Healthy`인지 확인한다.
 ## 행사 당일 순서
 
 1. **11월 27일 이후** — `/staff`에서 `EXPORT CSV`, 엑셀로 열어 케이터링에 인원 전달
-2. **행사 전날** — 스태프 휴대폰에 `/staff` 주소 북마크, PIN 공유
-3. **당일 입구** — 명단은 참고용이다. 이름이 없어도 들여보낸다
-4. **행사 후** — `EXPORT CSV`, `Membership interest`가 `yes`인 사람에게 가입 안내
+2. **행사 전날** — 스태프 휴대폰에 `/staff` 주소 북마크, PIN 공유.
+   입구 태블릿에서 `/?kiosk=1`을 열어 홈 화면에 추가해 둔다
+3. **당일 입구** — 태블릿 또는 포스터 QR로 등록. 명단은 참고용이다. 이름이 없어도
+   들여보낸다. "가입할게요" 하는 사람은 `/staff`의 `MAKE MEMBER`로 처리
+4. **행사 후** — `/staff`에서 `NOT MEMBERS YET`으로 `WANTS KDVA` 남은 사람 확인
 
 ---
 
@@ -252,7 +269,9 @@ Supabase 대시보드에서 프로젝트 상태가 `Healthy`인지 확인한다.
   삭제·축약 불가.
 - **현장 참석(walk-in)을 막는 장치** — 등록은 편의이지 조건이 아니다.
 - **참석자에게 로그인·인증을 요구하는 것** — 등록률이 무너진다.
-- **개인 QR 발급, 현장 QR 스캔, 입장 체크인** — 이번 범위가 아니다.
+- **개인 QR 발급, 현장 QR 스캔** — 범위가 아니다. 체크인은 폼에 한 줄 적기까지만.
+- **`members` 표의 값 형식** — 회원가입 앱과 한 글자도 다르면 안 된다(HQ 주간 보고).
+  시험 데이터는 `test+...@example.com`으로 만들고 반드시 지운다.
 
 자세한 규칙은 `CLAUDE.md`, 전체 명세는 `CLAUDE_CODE_PROMPT.md`.
 

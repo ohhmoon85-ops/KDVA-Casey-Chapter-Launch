@@ -162,11 +162,13 @@ export function ThanksView({
         </div>
       ) : null}
 
+      {/* On the night the person is already in the room, so the calendar
+          file has nothing left to do. */}
       {kiosk ? (
         <Link className="btn" href={home} replace>
           NEXT
         </Link>
-      ) : (
+      ) : eventDay ? null : (
         <a className="btn btn-ghost" href="/kdva-casey-year-end.ics" download>
           ADD TO CALENDAR
         </a>

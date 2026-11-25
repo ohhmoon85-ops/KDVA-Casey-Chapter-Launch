@@ -163,12 +163,13 @@ export function ThanksView({
       ) : null}
 
       {/* On the night the person is already in the room, so the calendar
-          file has nothing left to do. */}
+          file has nothing left to do. Members do not get it either, at the
+          user's request: their screen ends on the welcome. */}
       {kiosk ? (
         <Link className="btn" href={home} replace>
           NEXT
         </Link>
-      ) : eventDay ? null : (
+      ) : eventDay || joined ? null : (
         <a className="btn btn-ghost" href="/kdva-casey-year-end.ics" download>
           ADD TO CALENDAR
         </a>

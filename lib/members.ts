@@ -12,6 +12,7 @@
  */
 import 'server-only';
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { EVENT, TABLE } from '@/lib/event';
 import { composeRank } from '@/lib/membership';
 import { supabaseAdmin } from '@/lib/supabase';
 
@@ -58,6 +59,42 @@ export async function addMember(input: {
   }
 
   return 'joined';
+}
+
+/**
+ * Turns one RSVP for this event into a membership, after the caller has
+ * decided they may (a matching join token, or a signed-in staff member).
+ * Marks the RSVP as wanting membership too, so the roster tags agree.
+ */
+export async function joinFromRsvp(
+  id: number,
+  status: unknown,
+  rank: unknown,
+): Promise<JoinResult | 'not found'> {
+  const db = supabaseAdmin();
+
+  const { data: row, error } = await db
+    .from(TABLE)
+    .select('id, name, unit, email')
+    .eq('id', id)
+    .eq('event', EVENT)
+    .maybeSingle();
+
+  if (error) {
+    console.error('rsvp lookup failed', error);
+    return { error: 'lookup failed' };
+  }
+  if (!row) return 'not found';
+
+  const result = await addMember({ name: row.name, unit: row.unit, email: row.email, status, rank });
+  if (typeof result === 'object') return result;
+
+  const { error: updateError } = await db.from(TABLE).update({ wants_membership: true }).eq('id', id);
+  // The membership is what counts. A stale tag on the roster is not worth
+  // telling the person their sign-up failed.
+  if (updateError) console.error('wants_membership update failed', updateError);
+
+  return result;
 }
 
 /** The subset of these addresses that already belong to a member, lower case. */

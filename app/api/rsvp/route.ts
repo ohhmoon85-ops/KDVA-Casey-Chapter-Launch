@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { AFFILIATIONS, EVENT, TABLE } from '@/lib/event';
+import { composeRank, isServiceStatus } from '@/lib/membership';
+import { addMember, joinToken } from '@/lib/members';
 import { clientIp, rateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase';
 
@@ -65,24 +67,54 @@ export async function POST(req: Request) {
     return reject('That email address does not look right.');
   }
 
-  const wants_membership = input.wants_membership === true;
+  // Join or check in only — one of the two has to be chosen; nothing is
+  // picked for the person. The rank is checked before anything is saved,
+  // so a bad choice never leaves an RSVP behind without its membership.
+  if (typeof input.join !== 'boolean') {
+    return reject('Pick one: join KDVA, or check in only.');
+  }
+  const join = input.join;
+  if (join && !isServiceStatus(input.status)) {
+    return reject('Pick your service status to join KDVA.');
+  }
+  if (join && !composeRank(input.status, input.rank)) {
+    return reject('Pick your rank to join KDVA.');
+  }
 
   // Registration stays open past the deadline on purpose. The cut-off is a
   // catering convenience, not a condition of attending, so this route never
   // turns anyone away — the form only changes what it says.
+  let id: number;
   try {
-    const { error } = await supabaseAdmin()
+    const { data, error } = await supabaseAdmin()
       .from(TABLE)
-      .insert({ event: EVENT, name, affiliation, unit, email, wants_membership });
+      .insert({ event: EVENT, name, affiliation, unit, email, wants_membership: join })
+      .select('id')
+      .single();
 
-    if (error) {
+    if (error || !data) {
       console.error('rsvp insert failed', error);
       return reject(GENERIC, 502);
     }
+    id = data.id as number;
   } catch (err) {
     console.error('rsvp insert threw', err);
     return reject(GENERIC, 502);
   }
 
-  return NextResponse.json({ ok: true });
+  // The check-in is saved at this point and is the part that matters for
+  // the food count, so a failed membership write still answers 200. The
+  // thanks screen offers the join again.
+  let member: 'joined' | 'already' | 'failed' | null = null;
+  if (join) {
+    try {
+      const result = await addMember({ name, unit, email, status: input.status, rank: input.rank });
+      member = typeof result === 'object' ? 'failed' : result;
+    } catch (err) {
+      console.error('member write threw', err);
+      member = 'failed';
+    }
+  }
+
+  return NextResponse.json({ ok: true, id, token: joinToken(id), member });
 }

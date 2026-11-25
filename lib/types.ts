@@ -1,4 +1,4 @@
-/** One row of public.rsvps. Mirrors supabase/schema.sql. */
+/** One row of public.casey_rsvps. Mirrors supabase/schema.sql. */
 export type Rsvp = {
   id: number;
   event: string;
@@ -10,11 +10,25 @@ export type Rsvp = {
   created_at: string;
 };
 
-/** What POST /api/rsvp accepts. */
+/** A roster row, plus whether that email is already in `members`. */
+export type RosterRow = Rsvp & { is_member: boolean };
+
+/** What POST /api/rsvp accepts. `status` and `rank` only matter when joining. */
 export type RsvpInput = {
-  name: string;
+  last_name: string;
+  first_name: string;
   affiliation: string;
   unit: string | null;
   email: string;
-  wants_membership: boolean;
+  join: boolean;
+  status?: string;
+  rank?: string;
+};
+
+/** What POST /api/rsvp answers. The token lets this phone join later. */
+export type RsvpResult = {
+  ok: true;
+  id: number;
+  token: string;
+  member: 'joined' | 'already' | 'failed' | null;
 };

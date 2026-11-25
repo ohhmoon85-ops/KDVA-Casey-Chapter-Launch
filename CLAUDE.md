@@ -42,6 +42,11 @@ Next.js 15 (App Router) · TypeScript · Tailwind v4 · Supabase · Vercel · pn
    **President**이며, 사용자 확인을 받아
    "Dr. John P. Maza, President, KDVA Casey Chapter"로 적는다. 되돌리지 말 것.
 
+   승인된 예외 둘: 헤더 셋째 줄. 마감(11/27)까지는 포스터대로
+   `FREE FOOD / RSVP BY FRI 27 NOV`, 마감 다음 날부터는
+   `FREE FOOD / WALK IN, EAT, LISTEN, STAY`(포스터 하단 문구). 당일 체크인하는
+   사람에게 지난 마감일을 보이지 않기 위해서다.
+
    또한 푸터에 `/staff` 링크를 넣지 않는다. 예전에 이름 뒤에 두었더니
    "Staff"가 그의 직함처럼 읽혔다. 스태프는 주소를 직접 입력해 들어간다.
 

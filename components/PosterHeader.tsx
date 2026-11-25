@@ -1,7 +1,10 @@
+import { registrationClosed } from '@/lib/event';
+
 /**
- * The poster's header block. It sits above every screen, unchanged. The
- * wording follows the year-end poster (THU 3 DEC), so it is not adjustable
- * here without the poster changing first.
+ * The poster's header block. It sits above every screen. The wording
+ * follows the year-end poster (THU 3 DEC), so it is not adjustable here
+ * without the poster changing first — except the last line, which drops
+ * the RSVP deadline once it has passed (approved by the user).
  */
 export function PosterHeader() {
   return (
@@ -27,7 +30,10 @@ export function PosterHeader() {
         <br />
         LIVE ON STAGE AT THE WARRIOR CLUB
         <br />
-        FREE FOOD / RSVP BY FRI 27 NOV
+        {/* After the catering cut-off the deadline would only confuse people
+            checking in at the door, so it gives way to the poster's own
+            walk-in line. */}
+        {registrationClosed() ? 'FREE FOOD / WALK IN, EAT, LISTEN, STAY' : 'FREE FOOD / RSVP BY FRI 27 NOV'}
       </div>
     </header>
   );

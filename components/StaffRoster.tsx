@@ -2,7 +2,12 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { Rsvp } from '@/lib/types';
+import { JoinFields, joinFieldsError } from '@/components/JoinFields';
+import { statusFromAffiliation, type ServiceStatus } from '@/lib/membership';
+import type { RosterRow } from '@/lib/types';
+
+/** Often enough to watch the count climb at the door, rare enough not to matter. */
+const AUTO_REFRESH_MS = 30_000;
 
 const seoul = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Asia/Seoul',
@@ -48,10 +53,19 @@ function csvCell(value: unknown): string {
 
 export function StaffRoster() {
   const router = useRouter();
-  const [rows, setRows] = useState<Rsvp[] | null>(null);
+  const [rows, setRows] = useState<RosterRow[] | null>(null);
+  const [membersUnavailable, setMembersUnavailable] = useState(false);
   const [query, setQuery] = useState('');
+  const [onlyNonMembers, setOnlyNonMembers] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // MAKE MEMBER: one row open at a time.
+  const [openId, setOpenId] = useState<number | null>(null);
+  const [status, setStatus] = useState<ServiceStatus | ''>('');
+  const [rank, setRank] = useState('');
+  const [joinError, setJoinError] = useState('');
+  const [joining, setJoining] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -69,8 +83,9 @@ export function StaffRoster() {
         return;
       }
 
-      const payload = (await res.json()) as { rows: Rsvp[] };
+      const payload = (await res.json()) as { rows: RosterRow[]; membersUnavailable?: boolean };
       setRows(payload.rows);
+      setMembersUnavailable(Boolean(payload.membersUnavailable));
       setError('');
     } catch {
       setError('Could not reach the server. Check your connection, then try REFRESH.');
@@ -81,7 +96,57 @@ export function StaffRoster() {
 
   useEffect(() => {
     void load();
+    const timer = window.setInterval(() => {
+      // A phone left in a pocket need not keep asking.
+      if (document.visibilityState === 'visible') void load();
+    }, AUTO_REFRESH_MS);
+    return () => window.clearInterval(timer);
   }, [load]);
+
+  function openMakeMember(row: RosterRow) {
+    setOpenId(row.id);
+    setStatus(statusFromAffiliation(row.affiliation));
+    setRank('');
+    setJoinError('');
+  }
+
+  async function confirmMember(row: RosterRow) {
+    if (joining) return;
+    const problem = joinFieldsError(status, rank);
+    if (problem) {
+      setJoinError(problem);
+      return;
+    }
+
+    setJoining(true);
+    setJoinError('');
+    try {
+      const res = await fetch('/api/staff/join', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ id: row.id, status, rank }),
+      });
+      if (res.status === 401) {
+        router.refresh();
+        return;
+      }
+      const payload = (await res.json().catch(() => null)) as { error?: string } | null;
+      if (!res.ok) {
+        setJoinError(payload?.error ?? 'That did not save. Try once more.');
+        return;
+      }
+      setRows((list) =>
+        (list ?? []).map((r) =>
+          r.id === row.id ? { ...r, is_member: true, wants_membership: true } : r,
+        ),
+      );
+      setOpenId(null);
+    } catch {
+      setJoinError('Could not reach the server. Try once more.');
+    } finally {
+      setJoining(false);
+    }
+  }
 
   // Two counts, not three. Every reply is one person, so a separate
   // "expected" total would repeat the RSVP count in the next box along,
@@ -90,12 +155,14 @@ export function StaffRoster() {
     const list = rows ?? [];
     return {
       rsvps: list.length,
-      membership: list.filter((r) => r.wants_membership).length,
+      members: list.filter((r) => r.is_member).length,
+      pending: list.filter((r) => r.wants_membership && !r.is_member).length,
     };
   }, [rows]);
 
   const shown = useMemo(() => {
-    const list = rows ?? [];
+    const all = rows ?? [];
+    const list = onlyNonMembers ? all.filter((r) => !r.is_member) : all;
     const needle = query.trim().toLowerCase();
     if (!needle) return list;
     return list.filter(
@@ -103,10 +170,18 @@ export function StaffRoster() {
         (r.name || '').toLowerCase().includes(needle) ||
         (r.unit || '').toLowerCase().includes(needle),
     );
-  }, [rows, query]);
+  }, [rows, query, onlyNonMembers]);
 
   function exportCsv() {
-    const head = ['Name', 'Affiliation', 'Unit', 'Email', 'Membership interest', 'RSVP time'];
+    const head = [
+      'Name',
+      'Affiliation',
+      'Unit',
+      'Email',
+      'Membership interest',
+      'KDVA member',
+      'RSVP time',
+    ];
 
     const body = (rows ?? []).map((r) => [
       r.name,
@@ -114,6 +189,7 @@ export function StaffRoster() {
       r.unit ?? '',
       r.email ?? '',
       r.wants_membership ? 'yes' : '',
+      r.is_member ? 'yes' : '',
       csvStamp(r.created_at),
     ]);
 
@@ -122,7 +198,7 @@ export function StaffRoster() {
     // invisible character that an editor or a formatter can quietly drop,
     // and the damage would only show up on someone's laptop in December.
     const csv =
-      '\uFEFF' + [head, ...body].map((line) => line.map(csvCell).join(',')).join('\r\n');
+      '﻿' + [head, ...body].map((line) => line.map(csvCell).join(',')).join('\r\n');
 
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
     const link = document.createElement('a');
@@ -143,10 +219,18 @@ export function StaffRoster() {
           <span>RSVPS</span>
         </div>
         <div className="stat">
-          <b>{rows === null ? '—' : stats.membership}</b>
-          <span>MEMBERSHIP</span>
+          <b>{rows === null || membersUnavailable ? '—' : stats.members}</b>
+          <span>KDVA MEMBERS</span>
         </div>
       </div>
+
+      {rows !== null && !membersUnavailable && stats.pending > 0 ? (
+        <p className="fine stats-note">
+          {stats.pending === 1
+            ? '1 asked to join but is not a member yet'
+            : `${stats.pending} asked to join but are not members yet`}
+        </p>
+      ) : null}
 
       <div className="tools">
         <button className="pill" type="button" onClick={exportCsv} disabled={!rows?.length}>
@@ -155,11 +239,20 @@ export function StaffRoster() {
         <button className="pill" type="button" onClick={() => void load()} disabled={loading}>
           {loading ? 'LOADING…' : 'REFRESH'}
         </button>
+        <a className="pill" href="/?kiosk=1" target="_blank" rel="noopener">
+          OPEN DOOR TABLET
+        </a>
       </div>
 
       {error ? (
         <p className="banner banner-bad" role="alert">
           {error}
+        </p>
+      ) : null}
+
+      {membersUnavailable ? (
+        <p className="banner banner-bad" role="alert">
+          Could not check KDVA membership. Member counts and tags are off until a refresh works.
         </p>
       ) : null}
 
@@ -175,6 +268,25 @@ export function StaffRoster() {
         onChange={(e) => setQuery(e.target.value)}
       />
 
+      <div className="tools">
+        <button
+          className="pill"
+          type="button"
+          aria-pressed={!onlyNonMembers}
+          onClick={() => setOnlyNonMembers(false)}
+        >
+          ALL
+        </button>
+        <button
+          className="pill"
+          type="button"
+          aria-pressed={onlyNonMembers}
+          onClick={() => setOnlyNonMembers(true)}
+        >
+          NOT MEMBERS YET
+        </button>
+      </div>
+
       <div className="list">
         {rows === null ? (
           <div className="empty">Loading…</div>
@@ -186,16 +298,61 @@ export function StaffRoster() {
           </div>
         ) : (
           shown.map((r) => (
-            <div className="item" key={r.id}>
-              <div className="item-n">
-                <b>{r.name}</b>
-                <span>
-                  {r.affiliation ?? ''}
-                  {r.unit ? ` · ${r.unit}` : ''}
-                  {r.wants_membership ? <em className="tag-kdva">KDVA</em> : null}
-                </span>
+            <div key={r.id}>
+              <div className="item">
+                <div className="item-n">
+                  <b>{r.name}</b>
+                  <span>
+                    {r.affiliation ?? ''}
+                    {r.unit ? ` · ${r.unit}` : ''}
+                    {r.is_member ? (
+                      <em className="tag-kdva">KDVA ✓</em>
+                    ) : r.wants_membership ? (
+                      <em className="tag-wants">WANTS KDVA</em>
+                    ) : null}
+                  </span>
+                </div>
+                <div className="item-t">
+                  {shortStamp(r.created_at)}
+                  {!r.is_member && !membersUnavailable && openId !== r.id ? (
+                    <button
+                      className="pill item-act"
+                      type="button"
+                      onClick={() => openMakeMember(r)}
+                    >
+                      MAKE MEMBER
+                    </button>
+                  ) : null}
+                </div>
               </div>
-              <div className="item-t">{shortStamp(r.created_at)}</div>
+
+              {openId === r.id ? (
+                <div className="panel">
+                  <JoinFields
+                    idPrefix={`m-${r.id}`}
+                    status={status}
+                    rank={rank}
+                    onStatus={setStatus}
+                    onRank={setRank}
+                  />
+                  <p className="err" role="alert" aria-live="polite">
+                    {joinError}
+                  </p>
+                  <div className="tools">
+                    <button
+                      className="pill"
+                      type="button"
+                      onClick={() => void confirmMember(r)}
+                      disabled={joining}
+                    >
+                      {joining ? 'SAVING…' : 'CONFIRM'}
+                    </button>
+                    <button className="pill" type="button" onClick={() => setOpenId(null)}>
+                      CANCEL
+                    </button>
+                  </div>
+                </div>
+              ) : null}
             </div>
           ))
         )}
@@ -204,9 +361,9 @@ export function StaffRoster() {
       <p className="fine">
         {rows === null
           ? ''
-          : query.trim() && shown.length !== rows.length
+          : shown.length !== rows.length
             ? `Showing ${shown.length} of ${rows.length}. Both counts above always cover everyone.`
-            : 'RSVPS is the number for catering — one reply, one person. KDVA marks the people who asked for membership information.'}
+            : 'RSVPS is the number for catering — one reply, one person. KDVA ✓ is already a member; WANTS KDVA asked to join and still needs MAKE MEMBER. Refreshes every 30 seconds.'}
       </p>
     </section>
   );

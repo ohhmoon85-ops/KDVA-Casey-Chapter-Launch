@@ -4,6 +4,9 @@
 
 export const EVENT = 'casey-2026-12-03';
 
+/** Yyyy-mm-dd, Korea time. On this day the form becomes the door sign-in. */
+export const EVENT_DATE = '2026-12-03';
+
 /**
  * The Supabase project is shared with other apps, so the table carries a
  * prefix rather than sitting on a name as common as `rsvps`. Keep this in
@@ -16,6 +19,7 @@ export const AFFILIATIONS = [
   'KATUSA',
   'ROK military',
   'DoD civilian',
+  'Veteran',
   'Family member',
   'Guest',
 ] as const;
@@ -38,4 +42,10 @@ export function registrationClosed(now: Date = new Date()): boolean {
   const cutoff = Date.parse(`${RSVP_DEADLINE}T23:59:59+09:00`);
   if (!Number.isFinite(cutoff)) return false;
   return now.getTime() > cutoff;
+}
+
+/** True all of the event day, Korea time, whatever clock the server runs on. */
+export function isEventDay(now: Date = new Date()): boolean {
+  const seoul = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  return seoul.toISOString().slice(0, 10) === EVENT_DATE;
 }

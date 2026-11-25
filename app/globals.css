@@ -404,6 +404,141 @@
   .site-footer a {
     color: var(--color-dim);
   }
+
+  /* --- joining KDVA --- */
+
+  /* Join or check in only. Two equal buttons side by side, even on a
+     phone, so neither reads as the default. Nothing is red until picked. */
+  .choice {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .choice button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-height: 92px;
+    padding: 14px 10px;
+    background: var(--color-ink2);
+    border: 1px solid var(--color-line);
+    color: var(--color-paper);
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .choice b {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(17px, 4.6vw, 21px);
+    letter-spacing: 0.09em;
+    line-height: 1.1;
+  }
+
+  .choice span {
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--color-dim);
+  }
+
+  .choice button[aria-pressed='true'] {
+    background: var(--color-red);
+    border-color: var(--color-red);
+  }
+
+  .choice button[aria-pressed='true'] span {
+    color: var(--color-paper);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  /* Big enough to hit with a thumb at the door. */
+  .chips .pill {
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    padding: 9px 12px;
+  }
+
+  .hint {
+    color: var(--color-dim);
+    font-size: 13px;
+    line-height: 1.55;
+    margin-top: 10px;
+  }
+
+  .panel {
+    border: 1px solid var(--color-line);
+    padding: 4px 16px 18px;
+    margin-top: 18px;
+  }
+
+  .panel .btn {
+    margin-top: 16px;
+  }
+
+  .panel-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(20px, 5.4vw, 26px);
+    letter-spacing: 0.03em;
+    line-height: 1.15;
+    margin: 16px 0 6px;
+  }
+
+  .panel-body {
+    font-size: 14.5px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* "Checked in as …" for someone back through the same QR. */
+  .returning .banner {
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    letter-spacing: 0;
+    color: var(--color-paper);
+  }
+
+  .returning .banner .btn {
+    margin-top: 10px;
+  }
+
+  /* --- roster additions --- */
+  .tag-wants {
+    font-style: normal;
+    color: var(--color-paper);
+    letter-spacing: 0.12em;
+  }
+
+  .tag-wants::before { content: " \0000B7 "; color: var(--color-dim); }
+
+  .stats-note {
+    margin-top: 8px;
+  }
+
+  .item-t {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .pill[aria-pressed='true'] {
+    border-color: var(--color-red);
+    color: var(--color-paper);
+  }
+
+  a.pill {
+    text-decoration: none;
+    display: inline-block;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

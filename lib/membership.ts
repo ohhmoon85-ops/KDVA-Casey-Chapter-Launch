@@ -128,3 +128,22 @@ export function statusFromAffiliation(affiliation: string | null | undefined): S
       return '';
   }
 }
+
+/**
+ * The one line that asks someone to join, chosen by "I am". Approved
+ * wording — change it only with the user's say-so. Anything unknown gets
+ * the Guest line.
+ */
+const PITCHES: Record<string, string> = {
+  'U.S. Soldier': 'Keep your Korea connection after you PCS.',
+  KATUSA: 'Stay connected with your U.S. battle buddies after you ETS.',
+  'ROK military': 'Stay connected with your U.S. counterparts — tonight and long after.',
+  'DoD civilian': 'Keep your Korea connection after your tour ends.',
+  Veteran: 'Welcome back to the Korea family.',
+  'Family member': 'Be part of the ROK-US alliance community.',
+  Guest: 'Be part of the ROK-US alliance community.',
+};
+
+export function pitchFor(affiliation: string | null | undefined): string {
+  return PITCHES[affiliation ?? ''] ?? PITCHES.Guest;
+}

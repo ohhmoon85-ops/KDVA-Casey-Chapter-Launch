@@ -13,13 +13,17 @@ import {
   type CheckIn,
 } from '@/lib/checkins';
 import { AFFILIATIONS } from '@/lib/event';
-import { statusFromAffiliation, type ServiceStatus } from '@/lib/membership';
+import { pitchFor, statusFromAffiliation, type ServiceStatus } from '@/lib/membership';
 import type { RsvpResult } from '@/lib/types';
 
 /** Loose on purpose — it catches typos, it does not police addresses. */
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const DOMAINS = ['@gmail.com', '@army.mil', '@naver.com'];
+
+/** Below this a count discourages more than it persuades, so it stays hidden. */
+const MIN_JOINED_TO_SHOW = 5;
+const STATS_REFRESH_MS = 60_000;
 
 /**
  * Uncontrolled on purpose: when a save fails the inputs are never
@@ -56,6 +60,32 @@ export function RsvpForm({
   const [statusTouched, setStatusTouched] = useState(false);
   const [rank, setRank] = useState('');
   const [returning, setReturning] = useState<CheckIn[]>([]);
+  const [joinedCount, setJoinedCount] = useState<number | null>(null);
+  // Registering a colleague: joining them needs their say-so, ticked here.
+  const [consent, setConsent] = useState(false);
+  const askConsent = same && !kiosk;
+
+  // The real number of people who joined through this event. Any failure
+  // just leaves the line off; the form never waits on it.
+  useEffect(() => {
+    let live = true;
+    const fetchCount = async () => {
+      try {
+        const res = await fetch('/api/stats');
+        if (!res.ok) return;
+        const payload = (await res.json()) as { joinedTonight?: unknown };
+        if (live && typeof payload.joinedTonight === 'number') setJoinedCount(payload.joinedTonight);
+      } catch {
+        // Hidden is fine.
+      }
+    };
+    void fetchCount();
+    const timer = window.setInterval(() => void fetchCount(), STATS_REFRESH_MS);
+    return () => {
+      live = false;
+      window.clearInterval(timer);
+    };
+  }, []);
 
   // Storage only exists in the browser, so this waits until after the
   // first render; the server-rendered form is the same for everyone.
@@ -142,6 +172,13 @@ export function RsvpForm({
       const problem = joinFieldsError(status, rank);
       if (problem) {
         fail(problem, status ? '#f-join-rank' : '#f-join-status');
+        return;
+      }
+      if (askConsent && !consent) {
+        fail(
+          'Only choose JOIN if your colleague asked to join. Otherwise pick CHECK IN ONLY.',
+          '#f-consent',
+        );
         return;
       }
     }
@@ -316,6 +353,19 @@ export function RsvpForm({
         <div className="lbl" id="f-join-label">
           KDVA MEMBERSHIP
         </div>
+        <p className="pitch">{pitchFor(affiliation)}</p>
+        <ul className="benefits">
+          <li>Invites to Meet &amp; Greets like tonight</li>
+          <li>A network of USFK / KATUSA / CFC veterans in Korea and the U.S.</li>
+          <li>No dues. No obligations. We never share your info.</li>
+        </ul>
+        {joinedCount !== null && joinedCount >= MIN_JOINED_TO_SHOW ? (
+          <p className="joined-count">
+            {eventDay
+              ? `${joinedCount} people joined KDVA tonight`
+              : `${joinedCount} people have joined KDVA for this event`}
+          </p>
+        ) : null}
         <div className="choice" role="group" aria-labelledby="f-join-label">
           <button
             type="button"
@@ -324,17 +374,21 @@ export function RsvpForm({
             onClick={() => setJoin(true)}
           >
             <b>CHECK IN + JOIN KDVA</b>
-            <span>Free · 30 seconds · uses what you typed above</span>
+            <span>Join the KDVA Casey Chapter · Free · 30 seconds</span>
           </button>
           <button
             type="button"
             id="f-join-no"
             aria-pressed={join === false}
-            onClick={() => setJoin(false)}
+            onClick={() => {
+              setJoin(false);
+              setConsent(false);
+            }}
           >
             <b>CHECK IN ONLY</b>
           </button>
         </div>
+        <p className="hint">Email only — no birth date, no phone, no dues.</p>
 
         {join ? (
           <JoinFields
@@ -347,6 +401,18 @@ export function RsvpForm({
             }}
             onRank={setRank}
           />
+        ) : null}
+
+        {join && askConsent ? (
+          <label className="check" htmlFor="f-consent">
+            <input
+              type="checkbox"
+              id="f-consent"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+            />
+            They told me they want to join KDVA.
+          </label>
         ) : null}
 
         <p className="err" role="alert" aria-live="polite">

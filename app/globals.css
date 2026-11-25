@@ -452,6 +452,49 @@
     color: var(--color-paper);
   }
 
+  /* The one-line ask, chosen by "I am". */
+  .pitch {
+    color: var(--color-paper);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0 0 10px;
+  }
+
+  .benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 14px;
+  }
+
+  .benefits li {
+    position: relative;
+    padding-left: 18px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--color-dim);
+    margin-top: 4px;
+  }
+
+  /* Small square bullet in red — no rounded dots anywhere. */
+  .benefits li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 0.6em;
+    width: 6px;
+    height: 6px;
+    background: var(--color-red);
+  }
+
+  .joined-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-red);
+    margin: 0 0 12px;
+  }
+
   .chips {
     display: flex;
     flex-wrap: wrap;

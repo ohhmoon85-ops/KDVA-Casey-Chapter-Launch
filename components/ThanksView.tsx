@@ -13,7 +13,7 @@ import {
   type CheckIn,
   type MemberState,
 } from '@/lib/checkins';
-import { statusFromAffiliation, type ServiceStatus } from '@/lib/membership';
+import { pitchFor, statusFromAffiliation, type ServiceStatus } from '@/lib/membership';
 
 /** How long the door tablet shows a result before it is ready for the next person. */
 const KIOSK_RESET_MS = 6000;
@@ -104,7 +104,7 @@ export function ThanksView({
 
   let lede: string;
   if (member === 'joined') {
-    lede = "You're checked in and you're a KDVA member. We'll be in touch by email.";
+    lede = "Welcome to the KDVA Casey Chapter. We'll be in touch by email.";
   } else if (member === 'already') {
     lede = "You're already a KDVA member — thank you!";
   } else if (member === 'failed') {
@@ -135,6 +135,7 @@ export function ThanksView({
           {member !== 'failed' ? (
             <>
               <p className="panel-title">One more thing — KDVA membership is free.</p>
+              <p className="pitch">{pitchFor(record?.affiliation)}</p>
               <p className="panel-body">
                 Join the Korea Defense Veterans Association: alliance events like tonight, no dues,
                 no obligations.
@@ -157,6 +158,7 @@ export function ThanksView({
           <button className="btn" type="button" onClick={() => void onJoin()} disabled={joining}>
             {joining ? 'SAVING…' : 'JOIN KDVA NOW'}
           </button>
+          <p className="hint">Email only — no birth date, no phone, no dues.</p>
         </div>
       ) : null}
 
